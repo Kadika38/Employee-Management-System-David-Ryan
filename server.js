@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const { response } = require('express');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -69,13 +70,34 @@ function addEmployee() {
   /* runMenu(); */
 }
 
+function addRole() {
+
+}
+
+function addDepartment() {
+  const deptPrompt = [
+    {
+      type: 'input',
+      message: 'Enter the name of the new department',
+      name: 'deptName'
+    }
+  ];
+  var createDept = inquirer.prompt(deptPrompt);
+  createDept.then((response) => {
+    db.query(`INSERT INTO department (name) VALUES ('${response.deptName}');`, function (err, results) {
+      console.log(`Added ${response.deptName} to the database`);
+      runMenu();
+    })
+  })
+}
+
 function viewEmployees() {
   //retrieve employees
   db.query('SELECT * FROM employee', (err, results) => {
     console.table(results);
     runMenu();
   });
-};
+}
 
 function viewDepartments() {
   //retrieve depts
@@ -91,7 +113,7 @@ function viewRoles() {
     console.table(results);
     runMenu();
   });
-};
+}
 
 function doChoice(choice) {
   choice = choice.menuChoice;
