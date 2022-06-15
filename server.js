@@ -73,6 +73,7 @@ function viewEmployees() {
   //retrieve employees
   db.query('SELECT * FROM employee', (err, results) => {
     console.table(results);
+    runMenu();
   });
 };
 
@@ -80,13 +81,15 @@ function viewDepartments() {
   //retrieve depts
   db.query('SELECT * FROM department', (err, results) => {
     console.table(results);
-  });;
+    runMenu();
+  });
 }
 
 function viewRoles() {
   //retrieve roles
   db.query('SELECT * FROM role', (err, results) => {
     console.table(results);
+    runMenu();
   });
 };
 
@@ -99,7 +102,7 @@ function doChoice(choice) {
   if (choice == 'View All Employees') {viewEmployees()};
   if (choice == 'View All Roles') {viewRoles()};
   if (choice == 'View All Departments') {viewDepartments()};
-  if (choice == 'Quit') {quit()};
+  if (choice == 'Quit') {return};
 }
 
 function start() {
