@@ -1,5 +1,6 @@
 const express = require('express');
-const mysql = require('mysql2');
+const routes = require('./routes');
+/* const mysql = require('mysql2'); */
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -7,33 +8,23 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-const db = mysql.createConnection(
+/* const db = mysql.createConnection(
   {
     host: 'localhost',
-    // MySQL username,
     user: 'root',
-    // MySQL password
     password: 'DarmanIsKadikasDad1138()',
-    database: 'movies_db'
+    database: 'company_db'
   },
-  console.log(`Connected to the movies_db database.`)
-);
+  console.log(`Connected to the company_db database.`)
+); */
 
-//app.gets
+app.get('/kadtest', (req, res) => {
+  res.send('Hello');
+})
 
-app.get('/api/movies', (req, res) => {
-    let rslts;
-    db.query('SELECT movie_name FROM movies', (err, results) => {
-        if (err) {
-            console.log(err);
-        }
-        rslts = results;
-        console.log(results);
-    });
-    res.json(`Movies: ${rslts}`)
-});
+app.use(routes);
 
-// Default response for any other request (Not Found)
+// Default response for unknown requests
 app.use((req, res) => {
   res.status(404).end();
 });
