@@ -1,5 +1,4 @@
 const express = require('express');
-const routes = require('./routes');
 const inquirer = require('inquirer');
 
 const PORT = process.env.PORT || 3001;
@@ -8,7 +7,15 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use(routes);
+const db = mysql.createConnection(
+  {
+    host: 'localhost',
+    user: 'root',
+    password: 'DarmanIsKadikasDad1138()',
+    database: 'company_db'
+  },
+  console.log(`Connected to the company_db database.`)
+);
 
 // Default response for unknown requests
 app.use((req, res) => {
@@ -20,6 +27,7 @@ app.listen(PORT, () => {
 });
 
 //actual app runthrough
+
 const intro = ".--------------.\n|              |\n|   EMPLOYEE   |\n|   MANAGER    |\n|              |\n'--------------'";
 
 const menu = [
@@ -27,12 +35,38 @@ const menu = [
     type: 'list',
     message: 'What would you like to do?',
     name: 'menuChoice',
-    choices: ['Add Employee', 'Add Role', 'Add Department', 'Update Employee Role', 'View All Employees', 'View All Roles', 'View All Departments'],
+    choices: ['Add Employee', 'Add Role', 'Add Department', 'Update Employee Role', 'View All Employees', 'View All Roles', 'View All Departments', 'Quit'],
   },
 ];
 
+function runMenu() {
+  var runMenu = inquirer.prompt(menu);
+  runMenu.then((response) => {
+    doChoice(response);
+  });
+};
+
 function addEmployee() {
-  console.log("adding employee");
+  //run inquirer prompt
+  const employeeQs = [
+    {
+      type: 'input',
+      message: 'Please enter employees first name',
+      name: 'firstName',
+    },
+    {
+      type: 'input',
+      message: 'Please enter employees last name',
+      name: 'lastName',
+    }
+  ];
+  /* get('/api/employees'); */
+
+  //post call
+
+
+  //run menu
+  /* runMenu(); */
 }
 
 function doChoice(choice) {
@@ -43,7 +77,8 @@ function doChoice(choice) {
   if (choice = 'Update Employee Role') {updateEmployeeRole()};
   if (choice = 'View All Employees') {viewEmployees()};
   if (choice = 'View All Roles') {viewRoles()};
-  if (choice = 'View All Departments') {viewDepartments()}; */
+  if (choice = 'View All Departments') {viewDepartments()};
+  if (choice = 'Quit') {quit()}; */
 }
 
 function start() {
