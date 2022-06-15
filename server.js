@@ -1,5 +1,7 @@
 const express = require('express');
+const mysql = require('mysql2');
 const inquirer = require('inquirer');
+const cTable = require('console.table');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -22,9 +24,7 @@ app.use((req, res) => {
   res.status(404).end();
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => {});
 
 //actual app runthrough
 
@@ -47,6 +47,9 @@ function runMenu() {
 };
 
 function addEmployee() {
+  //retrieve roles and departments and managers
+
+
   //run inquirer prompt
   const employeeQs = [
     {
@@ -60,25 +63,43 @@ function addEmployee() {
       name: 'lastName',
     }
   ];
-  /* get('/api/employees'); */
-
-  //post call
 
 
   //run menu
   /* runMenu(); */
 }
 
+function viewEmployees() {
+  //retrieve employees
+  db.query('SELECT * FROM employee', (err, results) => {
+    console.table(results);
+  });
+};
+
+function viewDepartments() {
+  //retrieve depts
+  db.query('SELECT * FROM department', (err, results) => {
+    console.table(results);
+  });;
+}
+
+function viewRoles() {
+  //retrieve roles
+  db.query('SELECT * FROM role', (err, results) => {
+    console.table(results);
+  });
+};
+
 function doChoice(choice) {
   choice = choice.menuChoice;
-  if (choice = 'Add Employee') {addEmployee()};
-  /* if (choice = 'Add Role') {addRole()};
-  if (choice = 'Add Department') {addDepartment()};
-  if (choice = 'Update Employee Role') {updateEmployeeRole()};
-  if (choice = 'View All Employees') {viewEmployees()};
-  if (choice = 'View All Roles') {viewRoles()};
-  if (choice = 'View All Departments') {viewDepartments()};
-  if (choice = 'Quit') {quit()}; */
+  if (choice == 'Add Employee') {addEmployee()};
+  if (choice == 'Add Role') {addRole()};
+  if (choice == 'Add Department') {addDepartment()};
+  if (choice == 'Update Employee Role') {updateEmployeeRole()};
+  if (choice == 'View All Employees') {viewEmployees()};
+  if (choice == 'View All Roles') {viewRoles()};
+  if (choice == 'View All Departments') {viewDepartments()};
+  if (choice == 'Quit') {quit()};
 }
 
 function start() {
