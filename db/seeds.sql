@@ -8,6 +8,6 @@ VALUES  ("Manager", 120000, 1),
         ("Web Developer - Back End", 100000, 2);
 
 INSERT INTO employee (first_name, last_name, role, manager)
-VALUES  ("Steve", "Hart", 1, NULL),
-        ("Maki", "Sareva", 3, 1),
-        ("Soma", "Hospen", 2, 1);
+VALUES  ("The", "Batman", 1, NULL),
+        ("Maki", "Saloma", 3, 1),
+        ("Steve", "Hart", 2, 1);
