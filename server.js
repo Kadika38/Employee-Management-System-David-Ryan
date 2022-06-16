@@ -207,7 +207,10 @@ function doChoice(choice) {
   if (choice == 'View All Employees') {viewEmployees()};
   if (choice == 'View All Roles') {viewRoles()};
   if (choice == 'View All Departments') {viewDepartments()};
-  if (choice == 'Quit') {return};
+  if (choice == 'Quit') {
+    console.log("Goodbye!");
+    return process.exit(22)
+  };
 }
 
 function start() {
