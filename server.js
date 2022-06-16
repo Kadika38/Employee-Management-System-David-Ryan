@@ -174,6 +174,32 @@ function addDepartment() {
   })
 }
 
+function updateEmployeeRole() {
+  var roleArr = [''];
+  var namesArr = [''];
+  db.query('SELECT title FROM role;', function (err, results) {
+    roleArr.pop();
+    for (i = 0; i < results.length; i++) {roleArr.push(results[i].title)};
+    var roleUpPrompt = [
+      {
+        type: 'list',
+        message: 'Choose employees role:',
+        name: 'empRole',
+        choices: roleArr
+      }
+    ];
+    db.query("SELECT first_name, last_name FROM employee;", function (err, results) {
+      namesArr.pop();
+      for (i = 0; i < results.length; i++) {
+        combined = (results[i].first_name + " " + results[i].last_name);
+        namesArr.push(combined);
+      }
+      console.log(namesArr);
+    })
+    
+  });
+}
+
 function viewEmployees() {
   //retrieve employees
   db.query("SELECT a.id, a.first_name, a.last_name, role.title, department.name AS department, role.salary, concat(b.first_name, ' ', b.last_name) AS manager FROM employee AS a LEFT JOIN employee AS b ON a.manager = b.id JOIN role ON a.role = role.id JOIN department ON role.department_id = department.id;", (err, results) => {
