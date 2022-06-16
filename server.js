@@ -2,7 +2,6 @@ const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const { response } = require('express');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -71,7 +70,51 @@ function addEmployee() {
 }
 
 function addRole() {
-
+  var deptOptions;
+  var deptArr = [''];
+  db.query('SELECT name FROM department;', function (err, results) {
+    deptOptions = results;
+    deptArr.pop();
+    for (i = 0; i < deptOptions.length; i++) {deptArr.push(deptOptions[i].name)};
+  });
+  var rolePrompt = [
+    {
+      type: 'input',
+      message: 'Enter the name of the new role',
+      name: 'roleTitle'
+    },
+    {
+      type: 'input',
+      message: 'Enter the salary of the new role',
+      name: 'roleSalary'
+    },
+    {
+      type: 'list',
+      message: 'What department does the new role belong to?',
+      name: 'deptChoice',
+      choices: deptArr
+    }
+  ];
+  var title;
+  var salary;
+  var deptName;
+  var createRole = inquirer.prompt(rolePrompt);
+  createRole.then((response) => {
+    title = response.roleTitle;
+    salary = response.roleSalary;
+    deptName = response.deptChoice;
+    console.log(deptName);
+  }).then(() => {
+    db.query(`SELECT id FROM department WHERE name='${deptName}';`, function (err, results) {
+      var deptid = results[0].id;
+      db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${title}', ${salary}, ${deptid});`, function (err, results) {
+        console.log(`Added ${title} to the database`);
+        runMenu();
+      })
+    })
+  }
+  );
+  
 }
 
 function addDepartment() {
@@ -93,7 +136,7 @@ function addDepartment() {
 
 function viewEmployees() {
   //retrieve employees
-  db.query('SELECT * FROM employee', (err, results) => {
+  db.query('SELECT * FROM employee;', (err, results) => {
     console.table(results);
     runMenu();
   });
@@ -101,7 +144,7 @@ function viewEmployees() {
 
 function viewDepartments() {
   //retrieve depts
-  db.query('SELECT * FROM department', (err, results) => {
+  db.query('SELECT * FROM department;', (err, results) => {
     console.table(results);
     runMenu();
   });
@@ -109,7 +152,7 @@ function viewDepartments() {
 
 function viewRoles() {
   //retrieve roles
-  db.query('SELECT * FROM role', (err, results) => {
+  db.query('SELECT * FROM role;', (err, results) => {
     console.table(results);
     runMenu();
   });
