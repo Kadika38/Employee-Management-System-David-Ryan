@@ -180,23 +180,42 @@ function updateEmployeeRole() {
   db.query('SELECT title FROM role;', function (err, results) {
     roleArr.pop();
     for (i = 0; i < results.length; i++) {roleArr.push(results[i].title)};
-    var roleUpPrompt = [
-      {
-        type: 'list',
-        message: 'Choose employees role:',
-        name: 'empRole',
-        choices: roleArr
-      }
-    ];
     db.query("SELECT first_name, last_name FROM employee;", function (err, results) {
       namesArr.pop();
       for (i = 0; i < results.length; i++) {
         combined = (results[i].first_name + " " + results[i].last_name);
         namesArr.push(combined);
       }
-      console.log(namesArr);
+      var roleUpPrompt = [
+        {
+          type: 'list',
+          message: 'Choose employee to change role:',
+          name: 'empToChange',
+          choices: namesArr
+        },
+        {
+          type:'list',
+          message: 'Choose role to change to:',
+          name: 'roleToChangeTo',
+          choices: roleArr
+        }
+      ];
+      changeRole = inquirer.prompt(roleUpPrompt);
+      changeRole.then((response) => {
+        empToChangeAsArr = response.empToChange.split(' ');
+        db.query(`SELECT id FROM employee WHERE first_name='${empToChangeAsArr[0]}' AND last_name='${empToChangeAsArr[1]}'`, function (err, results) {
+          var thatEmpId = results[0].id;
+          db.query(`SELECT id FROM role WHERE title='${response.roleToChangeTo}'`, function (err, results) {
+            var thatRoleId = results[0].id;
+            db.query(`UPDATE employee SET role = ${thatRoleId} WHERE id = ${thatEmpId};`, function (err, results) {
+              console.log(`Changed ${empToChangeAsArr[0] + " " + empToChangeAsArr[[1]]}'s role to ${response.roleToChangeTo} in the database`);
+              runMenu();
+            })
+          })
+        })
+      })
     })
-    
+
   });
 }
 
