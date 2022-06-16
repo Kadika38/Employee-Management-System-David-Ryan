@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const { response } = require('express');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -47,26 +48,65 @@ function runMenu() {
 };
 
 function addEmployee() {
-  //retrieve roles and departments and managers
+  var roleArr = [''];
+  var mgrArr = [''];
+  db.query('SELECT title FROM role;', function (err, results) {
+    roleArr.pop();
+    for (i = 0; i < results.length; i++) {roleArr.push(results[i].title)};
+  });
+  db.query('SELECT first_name, last_name FROM employee WHERE role=1;', function (err, results) {
+    mgrArr.pop();
+    for (i = 0; i < results.length; i++) {mgrArr.push(results[i].first_name + " " + results[i].last_name)};
+    mgrArr.push("Employee is a manager");
 
-
-  //run inquirer prompt
-  const employeeQs = [
-    {
-      type: 'input',
-      message: 'Please enter employees first name',
-      name: 'firstName',
-    },
-    {
-      type: 'input',
-      message: 'Please enter employees last name',
-      name: 'lastName',
-    }
-  ];
-
-
-  //run menu
-  /* runMenu(); */
+    var empPrompt = [
+      {
+        type: 'input',
+        message: 'Enter the employees first name:',
+        name: 'empFn'
+      },
+      {
+        type: 'input',
+        message: 'Enter the employees last name:',
+        name: 'empLn'
+      },
+      {
+        type: 'list',
+        message: 'Choose employees role:',
+        name: 'empRole',
+        choices: roleArr
+      },
+      {
+        type: 'list',
+        message: 'Choose employees manager:',
+        name: 'empMgr',
+        choices: mgrArr
+      }
+    ];
+    createEmp = inquirer.prompt(empPrompt);
+    createEmp.then((response) => {
+      
+      db.query(`SELECT id FROM role WHERE title='${response.empRole}';`, function (err, results) {
+        var roleid = results[0].id;
+        if (response.empMgr != "Employee is a manager") {
+          nameArr = response.empMgr.split(' ');
+          db.query(`SELECT id FROM employee WHERE first_name='${nameArr[0]}' AND last_name='${nameArr[1]}';`, function (err, results) {
+            var mgrid = results[0].id;
+            db.query(`INSERT INTO employee (first_name, last_name, role, manager) VALUES ('${response.empFn}', '${response.empLn}', ${roleid}, ${mgrid});`, function (err, results) {
+              console.log(`Added ${response.empFn + " " + response.empLn} to the database`);
+              runMenu();
+            });
+          });
+        }
+        if (response.empMgr == "Employee is a manager") {
+          db.query(`INSERT INTO employee (first_name, last_name, role) VALUES ('${response.empFn}', '${response.empLn}', ${roleid});`, function (err, results) {
+            console.log(`Added ${response.empFn + " " + response.empLn} to the database`);
+            runMenu();
+          });
+        }
+      })
+    })
+  });
 }
 
 function addRole() {
