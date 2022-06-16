@@ -176,7 +176,7 @@ function addDepartment() {
 
 function viewEmployees() {
   //retrieve employees
-  db.query('SELECT * FROM employee;', (err, results) => {
+  db.query("SELECT a.id, a.first_name, a.last_name, role.title, department.name AS department, role.salary, concat(b.first_name, ' ', b.last_name) AS manager FROM employee AS a LEFT JOIN employee AS b ON a.manager = b.id JOIN role ON a.role = role.id JOIN department ON role.department_id = department.id;", (err, results) => {
     console.table(results);
     runMenu();
   });
